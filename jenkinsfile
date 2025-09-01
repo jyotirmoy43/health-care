@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven_3.9.6' // Make sure this name matches what you configured in Jenkins UI
+        maven 'Maven_3.9.6'
     }
 
     environment {
@@ -44,18 +44,26 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t myimg1 .'
+                sh 'docker build -t jyotirmoy43/myimg1 .'
+            }
+        }
+
+        stage('Push Docker Image to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push jyotirmoy43/myimg1
+                    '''
+                }
             }
         }
 
         stage('Run Docker Container') {
             steps {
                 sh '''
-                    # Remove existing container if it exists
                     docker rm -f c000 || true
-
-                    # Run new container
-                    docker run -dt -p 8091:8091 --name c000 myimg
+                    docker run -dt -p 8091:8091 --name c000 jyotirmoy43/myimg1
                 '''
             }
         }
