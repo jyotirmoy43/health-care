@@ -76,8 +76,8 @@ pipeline {
             steps {
                 echo '🚀 Running Docker container...'
                 sh '''
-                    docker rm -f c000 || true
-                    docker run -dt -p 8091:8091 --name c000 jyotirmoy43/myimg1
+                    docker rm -f c21 || true
+                    docker run -dt -p 8091:8091 --name c21 jyotirmoy43/myimg1
                 '''
             }
         }
